@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEvents } from '../contexts/EventContext'
-import { format, isToday, isTomorrow, isPast } from 'date-fns'
+import { format, isToday, isTomorrow, isPast, isSameDay } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
 import { 
   PencilIcon, 
@@ -12,6 +12,7 @@ import {
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 import TaskLabel from './TaskLabel'
 import PriorityBadge from './PriorityBadge'
+import { useTheme } from '../contexts/ThemeContext'
 import DeleteConfirmDialog from './DeleteConfirmDialog'
 import { useNotification } from '../contexts/NotificationContext'
 
@@ -19,6 +20,7 @@ function EventList({ onEditEvent, activeFilters }) {
   const { events, dispatch, loading, toggleComplete } = useEvents()
   const [deleteEventId, setDeleteEventId] = useState(null)
   const { showNotification } = useNotification();
+  const { theme } = useTheme()
   
   const filteredEvents = events.filter(event => {
     if (activeFilters.labels.length > 0) {
@@ -64,6 +66,15 @@ function EventList({ onEditEvent, activeFilters }) {
     return format(date, 'MMM d')
   }
 
+  const calculateSubtaskProgress = (subtasks) => {
+    if (!subtasks || subtasks.length === 0) return 0;
+    const completedSubtasks = subtasks.filter(subtask => subtask.completed).length;
+    return (completedSubtasks / subtasks.length) * 100;
+  };
+
+  const handleToggleSubtask = async (event, subtaskIndex) => {
+    await toggleComplete(event.id, event.completed, subtaskIndex);
+  };
   const groupedEvents = sortedEvents.reduce((acc, event) => {
     const status = getTimeStatus(event.time)
     if (!acc[status]) {
@@ -171,6 +182,28 @@ function EventList({ onEditEvent, activeFilters }) {
                           </div>
                         </td>
                         <td className="py-1 md:py-2 text-left">
+                          {event.subtasks && event.subtasks.length > 0 && (
+                            <div className="space-y-1">
+                              {event.subtasks.map((subtask, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={subtask.completed}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleToggleSubtask(event, index)
+                                    }}
+                                    className="form-checkbox"
+                                  >
+                                  </input>
+                                  <span className={`text-sm ${subtask.completed ? 'line-through dark:text-gray-400' : 'dark:text-gray-100'}`}>{subtask.title}</span>
+                                </div>
+                              ))}
+                              <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div className={`h-full bg-[var(--primary)]`} style={{ width: `${calculateSubtaskProgress(event.subtasks)}%` }} />
+                              </div>
+                            </div>
+                          )}
                           {event.description && (
                             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
                               {event.description}
@@ -216,7 +249,6 @@ function EventList({ onEditEvent, activeFilters }) {
           )
         })
       )}
-
       {deleteEventId && (
         <DeleteConfirmDialog
           onConfirm={confirmDelete}

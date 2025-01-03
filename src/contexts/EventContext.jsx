@@ -17,8 +17,19 @@ const eventReducer = (state, action) => {
       return state.filter(event => event.id !== action.payload);
     case 'TOGGLE_COMPLETE_SUCCESS':
       return state.map(event =>
-        event.id === action.payload.id
-          ? { ...event, completed: action.payload.completed }
+        event.id === action.payload.id ? { ...event, completed: action.payload.completed } : event
+      );
+    case 'TOGGLE_SUBTASK_COMPLETE_SUCCESS':
+      return state.map(event =>
+        event.id === action.payload.eventId
+          ? {
+              ...event,
+              subtasks: event.subtasks.map((subtask, index) =>
+                index === action.payload.subtaskIndex
+                  ? { ...subtask, completed: !subtask.completed }
+                  : subtask
+              )
+            }
           : event
       );
     case 'SET_EVENTS':
@@ -128,8 +139,32 @@ export function EventProvider({ children }) {
     }
   };
 
-  const toggleComplete = async (eventId, completed) => {
+  const toggleComplete = async (eventId, completed, subtaskIndex = null) => {
     try {
+      if (subtaskIndex !== null) {
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('subtasks')
+          .eq('id', eventId)
+          .single()
+
+        if (error) {
+          console.error('Error fetching subtasks:', error);
+          return;
+        }
+
+        const updatedSubtasks = data.subtasks.map((subtask, index) =>
+          index === subtaskIndex ? { ...subtask, completed: !subtask.completed } : subtask
+        );
+
+        await supabase
+          .from('tasks')
+          .update({ subtasks: updatedSubtasks })
+          .eq('id', eventId)
+
+        dispatch({ type: 'TOGGLE_SUBTASK_COMPLETE_SUCCESS', payload: { eventId, subtaskIndex } });
+        return
+      }
       const { data, error } = await supabase
         .from('tasks')
         .update({ completed: !completed })
@@ -150,7 +185,7 @@ export function EventProvider({ children }) {
   };
 
   return (
-    <EventContext.Provider value={{ events, dispatch, addEvent, updateEvent, deleteEvent, toggleComplete }}>
+    <EventContext.Provider value={{ events, dispatch, addEvent, updateEvent, deleteEvent, toggleComplete,  }}>
       {children}
     </EventContext.Provider>
   )
