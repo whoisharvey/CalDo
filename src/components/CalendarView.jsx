@@ -10,6 +10,7 @@ import {
   parseISO,
   isPast
 } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
 import { PRIORITY_LEVELS } from '../constants/priorities'
 
 function CalendarView() {
@@ -24,7 +25,7 @@ function CalendarView() {
 
   const eventsByDate = useMemo(() => {
     return events.reduce((acc, event) => {
-      const dateKey = format(parseISO(event.time), 'yyyy-MM-dd')
+      const dateKey = format(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone), 'yyyy-MM-dd')
       if (!acc[dateKey]) {
         acc[dateKey] = []
       }
@@ -77,7 +78,7 @@ function CalendarView() {
               </div>
               <div className="space-y-1">
                 {sortedEvents.map(event => {
-                  const isOverdue = isPast(parseISO(event.time)) && !event.completed
+                  const isOverdue = isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed
                   
                   return (
                     <div
@@ -94,7 +95,7 @@ function CalendarView() {
                         <span className="text-base">{event.icon || '📅'}</span>
                         <div>
                           <div className={`font-medium ${event.completed ? 'line-through dark:text-gray-400' : 'dark:text-gray-100'}`}>
-                            {format(parseISO(event.time), 'h:mm a')} {event.title}
+                            {format(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone), 'h:mm a')} {event.title}
                           </div>
                           {isOverdue && !event.completed && (
                             <div className="text-red-500">Overdue</div>

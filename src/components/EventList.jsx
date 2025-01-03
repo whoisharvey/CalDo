@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useEvents } from '../contexts/EventContext'
 import { format, isToday, isTomorrow, isPast } from 'date-fns'
+import { utcToZonedTime } from 'date-fns-tz'
 import { 
   PencilIcon, 
   TrashIcon, 
@@ -56,7 +57,7 @@ function EventList({ onEditEvent, activeFilters }) {
   }
 
   const getTimeStatus = (time) => {
-    const date = new Date(time)
+    const date = utcToZonedTime(time, Intl.DateTimeFormat().resolvedOptions().timeZone)
     if (isToday(date)) return 'Today'
     if (isTomorrow(date)) return 'Tomorrow'
     if (isPast(date)) return 'Past'
@@ -161,8 +162,8 @@ function EventList({ onEditEvent, activeFilters }) {
                         <td className="py-2 text-center">
                           <div className="flex items-center justify-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                             <ClockIcon className="w-4 h-4" />
-                            {format(new Date(event.time), 'h:mm a')}
-                            {isPast(new Date(event.time)) && !event.completed && (
+                            {format(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone), 'h:mm a')}
+                            {isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed && (
                               <div className="flex items-center gap-1 text-red-500">
                                 <ExclamationCircleIcon className="w-4 h-4" />
                                 Overdue

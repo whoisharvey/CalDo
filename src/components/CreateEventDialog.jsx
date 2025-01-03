@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { format } from 'date-fns'
+import { format, parse } from 'date-fns'
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
 import { useEvents } from '../contexts/EventContext'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import IconSelector from './IconSelector'
@@ -23,12 +24,11 @@ function CreateEventDialog({ event, onClose }) {
 
   useEffect(() => {
     if (event) {
-      console.log('Editing event:', event);
-      console.log('Event time:', event.time);
+      const zonedTime = utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone);
       setFormData({
         title: event.title,
         description: event.description,
-        time: format(new Date(event.time), "yyyy-MM-dd'T'HH:mm"),
+        time: format(zonedTime, "yyyy-MM-dd'T'HH:mm"),
         reminder: event.reminder || false,
         icon: event.icon || '📅',
         completed: event.completed || false,
@@ -40,20 +40,20 @@ function CreateEventDialog({ event, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit called');
-    console.log('Form Data before dispatch:', formData);
+    const localTime = parse(formData.time, "yyyy-MM-dd'T'HH:mm", new Date());
+    const utcTime = zonedTimeToUtc(localTime, Intl.DateTimeFormat().resolvedOptions().timeZone);
+
     const eventData = {
       ...formData,
+      time: utcTime.toISOString(),
       labels: formData.labels || [],
       priority: formData.priority || 'low'
     }
 
     if (event) {
-      console.log('Dispatching UPDATE_EVENT with:', { ...event, ...eventData });
       await updateEvent({ ...event, ...eventData })
       showNotification('Task updated successfully!');
     } else {
-      console.log('Dispatching ADD_EVENT with:', eventData);
       await addEvent(eventData)
       showNotification('Task created successfully!');
     }
