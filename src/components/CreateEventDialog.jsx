@@ -4,11 +4,11 @@ import { useEvents } from '../contexts/EventContext'
 import { useNotification } from '../contexts/NotificationContext'
 import IconSelector from './IconSelector'
 import LabelSelector from './LabelSelector'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { PRIORITY_LEVELS } from '../constants/priorities'
 
 function CreateEventDialog({ event: initialEvent, onClose }) {
-  const { addEvent, updateEvent } = useEvents()
+  const { addEvent, updateEvent, toggleComplete } = useEvents()
   const { showNotification } = useNotification()
   const [event, setEvent] = useState({
     title: '',
@@ -94,6 +94,21 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
     });
   };
 
+  const calculateSubtaskProgress = (subtasks) => {
+    if (!subtasks || subtasks.length === 0) return 0;
+    const completedSubtasks = subtasks.filter(subtask => subtask.completed).length;
+    return (completedSubtasks / subtasks.length) * 100;
+  };
+
+  const handleToggleSubtask = async (subtaskIndex) => {
+    await toggleComplete(event.id, event.completed, subtaskIndex);
+    setEvent(prevEvent => {
+      const newSubtasks = [...prevEvent.subtasks]
+      newSubtasks[subtaskIndex] = { ...newSubtasks[subtaskIndex], completed: !newSubtasks[subtaskIndex].completed }
+      return { ...prevEvent, subtasks: newSubtasks }
+    })
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (event.title.trim() === '') {
@@ -173,13 +188,26 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               rows="3"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Subtasks
             </label>
+            {event.subtasks && event.subtasks.length > 0 && (
+              <div className="mb-2">
+                <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className={`h-full bg-[var(--primary)]`} style={{ width: `${calculateSubtaskProgress(event.subtasks)}%` }} />
+                </div>
+              </div>
+            )}
             <div className="space-y-2">
               {event.subtasks && event.subtasks.map((subtask, index) => (
                 <div key={index} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={subtask.completed}
+                    onClick={() => handleToggleSubtask(index)}
+                    className="form-checkbox"
+                  />
                   <input
                     type="text"
                     value={subtask.title}
@@ -199,9 +227,9 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               <button
                 type="button"
                 onClick={handleAddSubtask}
-                className="btn-secondary"
+                className="btn-primary mt-2 w-7 h-7"
               >
-                Add Subtask
+                <PlusIcon className="w-4 h-4" />
               </button>
             </div>
           </div>

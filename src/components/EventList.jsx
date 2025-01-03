@@ -7,7 +7,6 @@ import {
   TrashIcon, 
   CheckCircleIcon,
   ClockIcon,
-  ExclamationCircleIcon
 } from '@heroicons/react/24/outline'
 import { CheckCircleIcon as CheckCircleSolidIcon } from '@heroicons/react/24/solid'
 import TaskLabel from './TaskLabel'
@@ -120,13 +119,13 @@ function EventList({ onEditEvent, activeFilters }) {
                   >
                     <thead className="text-xs text-gray-500 dark:text-gray-400">
                       <tr className="h-8 md:h-10">
-                        <th className="text-center w-1/12 py-1 md:py-2"></th>
-                        <th className="text-center w-1/12 py-1 md:py-2">Icon</th>
-                        <th className="text-left w-2/12 py-1 md:py-2">Task Name</th>
+                        <th className="text-center w-[0.3/12] py-1 md:py-2"></th>
+                        <th className="text-center w-[0.8/12] py-1 md:py-2">Icon</th>
+                        <th className="text-center w-2/12 py-1 md:py-2">Task Name</th>
                         <th className="text-center w-1/12 py-1 md:py-2">Priority</th>
                         <th className="text-center w-2/12 py-1 md:py-2">Due</th>
-                        <th className="text-left w-3/12 py-1 md:py-2">Description</th>
-                        <th className="text-center w-1/12 py-1 md:py-2">Categories</th>
+                        <th className="text-center w-[1.5/12] py-1 md:py-2">Progress</th>
+                        <th className="text-center w-[1/12] py-1 md:py-2">Categories</th>
                         <th className="text-center w-1/12 py-1 md:py-2">Actions</th>
                       </tr>
                     </thead>
@@ -159,7 +158,7 @@ function EventList({ onEditEvent, activeFilters }) {
                             </span>
                           </div>
                         </td>
-                        <td className="py-1 md:py-2 text-left">
+                        <td className="py-1 md:py-2 text-center">
                           <div className={`flex items-center gap-2 ${event.completed ? 'opacity-50' : ''}`}>
                             <span className={`text-sm ${event.completed ? 'line-through dark:text-gray-400' : 'font-medium dark:text-gray-100'}`}>
                               {event.title}
@@ -170,38 +169,17 @@ function EventList({ onEditEvent, activeFilters }) {
                           <PriorityBadge priority={event.priority} />
                         </td>
                         <td className="py-1 md:py-2 text-center">
-                          <div className="flex items-center justify-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                          <div className={`flex items-center justify-center gap-1 text-sm text-gray-500 dark:text-gray-400
+                            ${isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed ? 'text-red-500' : ''}`}
+                          >
                             <ClockIcon className="w-3 h-3 md:w-4 md:h-4" />
                             {format(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone), 'h:mm a')}
-                            {isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed && (
-                              <div className="flex items-center gap-1 text-red-500">
-                                <ExclamationCircleIcon className="w-3 h-3 md:w-4 md:h-4" />
-                                Overdue
-                              </div>
-                            )}
                           </div>
                         </td>
-                        <td className="py-1 md:py-2 text-left">
+                        <td className="py-1 md:py-2 text-center">
                           {event.subtasks && event.subtasks.length > 0 && (
-                            <div className="space-y-1">
-                              {event.subtasks.map((subtask, index) => (
-                                <div key={index} className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    checked={subtask.completed}
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      handleToggleSubtask(event, index)
-                                    }}
-                                    className="form-checkbox"
-                                  >
-                                  </input>
-                                  <span className={`text-sm ${subtask.completed ? 'line-through dark:text-gray-400' : 'dark:text-gray-100'}`}>{subtask.title}</span>
-                                </div>
-                              ))}
-                              <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                                <div className={`h-full bg-[var(--primary)]`} style={{ width: `${calculateSubtaskProgress(event.subtasks)}%` }} />
-                              </div>
+                            <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden max-w-[100px] mx-auto">
+                              <div className={`h-full bg-[var(--primary)]`} style={{ width: `${calculateSubtaskProgress(event.subtasks)}%` }} />
                             </div>
                           )}
                           {event.description && (
