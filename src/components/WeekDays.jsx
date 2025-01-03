@@ -16,7 +16,7 @@ function WeekDays({ today }) {
   }, [today, startOfCurrentWeek])
 
   return (
-    <div className="grid grid-cols-7 gap-2 mt-6">
+    <div className="grid grid-cols-7 gap-2 mt-6 pb-4">
       {weekDays.map(({ dayName, date, isToday }) => (
         <div
           key={dayName}
