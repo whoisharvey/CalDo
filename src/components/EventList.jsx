@@ -73,7 +73,6 @@ function EventList({ onEditEvent, activeFilters }) {
     return acc
   }, {})
 
-  // Ensure specific order of sections
   const sections = ['Past', 'Today', 'Tomorrow', ...Object.keys(groupedEvents)
     .filter(key => !['Past', 'Today', 'Tomorrow'].includes(key))]
 

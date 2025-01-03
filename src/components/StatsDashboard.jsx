@@ -18,18 +18,15 @@ function StatsDashboard() {
     const completed = events.filter(e => e.completed).length
     const completionRate = total ? Math.round((completed / total) * 100) : 0
 
-    // Time-based stats
     const todayTasks = events.filter(e => isToday(new Date(e.time))).length
     const weekTasks = events.filter(e => isThisWeek(new Date(e.time))).length
     const monthTasks = events.filter(e => isThisMonth(new Date(e.time))).length
 
-    // Priority distribution
     const priorityStats = Object.keys(PRIORITY_LEVELS).reduce((acc, priority) => {
       acc[priority] = events.filter(e => e.priority === priority).length
       return acc
     }, {})
 
-    // Label distribution
     const labelStats = Object.keys(LABEL_COLORS).reduce((acc, label) => {
       acc[label] = events.filter(e => e.labels.includes(label)).length
       return acc
@@ -79,7 +76,6 @@ function StatsDashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
           title="Total Tasks" 
@@ -107,7 +103,6 @@ function StatsDashboard() {
         />
       </div>
 
-      {/* Completion Rate */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700
       hover:shadow-md hover:border-[var(--primary-light)] dark:hover:border-[var(--primary-light)]
       transition-all duration-200 ease-in-out
@@ -120,7 +115,6 @@ function StatsDashboard() {
         </p>
       </div>
 
-      {/* Priority Distribution */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700
       hover:shadow-md hover:border-[var(--primary-light)] dark:hover:border-[var(--primary-light)]
       transition-all duration-200 ease-in-out
@@ -143,7 +137,6 @@ function StatsDashboard() {
         </div>
       </div>
 
-      {/* Label Distribution */}
       <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-100 dark:border-gray-700
       hover:shadow-md hover:border-[var(--primary-light)] dark:hover:border-[var(--primary-light)]
       transition-all duration-200 ease-in-out

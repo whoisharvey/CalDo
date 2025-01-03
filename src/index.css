@@ -33,7 +33,6 @@ body {
          transition-all duration-300 ease-out;
 }
 
-/* Form Elements */
 .form-input {
   @apply w-full px-3 py-2 
          bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg
@@ -88,7 +87,6 @@ input[type="checkbox"] {
          rounded-lg transition-colors duration-200;
 }
 
-/* Custom scrollbar */
 .dialog-content::-webkit-scrollbar {
   @apply w-2;
 }

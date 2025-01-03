@@ -4,7 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // Enable dark mode using class strategy
+  darkMode: 'class',
   theme: {
     extend: {
       transitionDuration: {

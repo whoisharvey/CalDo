@@ -8,10 +8,8 @@ const initialState = []
 const eventReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_EVENT_SUCCESS':
-      console.log('ADD_EVENT_SUCCESS reducer, state:', state, 'payload:', action.payload);
       return [...state, action.payload];
     case 'UPDATE_EVENT_SUCCESS':
-      console.log('UPDATE_EVENT_SUCCESS reducer, state:', state, 'payload:', action.payload);
       return state.map(event =>
         event.id === action.payload.id ? action.payload : event
       );
@@ -24,7 +22,6 @@ const eventReducer = (state, action) => {
           : event
       );
     case 'SET_EVENTS':
-      console.log('SET_EVENTS action received:', action.payload);
       return action.payload;
     default:
       return state;
@@ -66,7 +63,6 @@ export function EventProvider({ children }) {
       if (error) {
         console.error('Error fetching events:', error);
       } else {
-        console.log('Initial fetch, SET_EVENTS dispatched with:', data);
         dispatch({ type: 'SET_EVENTS', payload: data });
       }
     };
@@ -85,7 +81,6 @@ export function EventProvider({ children }) {
         console.error('Error adding event:', error);
       } else {
         if (data && data.length > 0) {
-          console.log('ADD_EVENT_SUCCESS dispatched with:', data[0]);
           dispatch({ type: 'ADD_EVENT_SUCCESS', payload: data[0] });
         } else {
           console.error('Error: data is null after insert');
@@ -107,7 +102,6 @@ export function EventProvider({ children }) {
         console.error('Error updating event:', error);
       } else {
         if (data && data.length > 0) {
-          console.log('UPDATE_EVENT_SUCCESS dispatched with:', data[0]);
           dispatch({ type: 'UPDATE_EVENT_SUCCESS', payload: data[0] });
         } else {
           console.error('Error: data is null after update');
@@ -127,7 +121,6 @@ export function EventProvider({ children }) {
       if (error) {
         console.error('Error deleting event:', error);
       } else {
-        console.log('DELETE_EVENT_SUCCESS dispatched with:', eventId);
         dispatch({ type: 'DELETE_EVENT_SUCCESS', payload: eventId });
       }
     } catch (error) {
@@ -146,7 +139,6 @@ export function EventProvider({ children }) {
         console.error('Error toggling complete:', error);
       } else {
         if (data && data.length > 0) {
-          console.log('TOGGLE_COMPLETE_SUCCESS dispatched with:', { id: eventId, completed: !completed });
           dispatch({ type: 'TOGGLE_COMPLETE_SUCCESS', payload: { id: eventId, completed: !completed } });
         } else {
           console.error('Error: data is null after toggle complete');

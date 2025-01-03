@@ -26,7 +26,6 @@ function DeleteConfirmDialog({ onConfirm, onCancel, eventId }) {
             </button>
             <button
               onClick={async () => {
-                console.log('Confirm delete clicked');
                 await deleteEvent(eventId);
                 showNotification('Task deleted successfully!', 'warning');
                 onCancel()

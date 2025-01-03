@@ -7,11 +7,9 @@ import {
   format,
   isSameMonth,
   isToday,
-  parseISO,
   isPast
 } from 'date-fns'
 import { utcToZonedTime } from 'date-fns-tz'
-import { PRIORITY_LEVELS } from '../constants/priorities'
 
 function CalendarView() {
   const { events } = useEvents()
@@ -21,7 +19,7 @@ function CalendarView() {
     const start = startOfMonth(today)
     const end = endOfMonth(today)
     return eachDayOfInterval({ start, end })
-  }, [])
+  }, [today])
 
   const eventsByDate = useMemo(() => {
     return events.reduce((acc, event) => {

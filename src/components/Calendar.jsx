@@ -18,7 +18,7 @@ function Calendar() {
   const [editingEvent, setEditingEvent] = useState(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [activeFilters, setActiveFilters] = useState({ labels: [], priority: null })
-  const [view, setView] = useState('list') // 'list', 'calendar', or 'stats'
+  const [view, setView] = useState('list')
   const today = new Date()
   const startOfCurrentWeek = startOfWeek(today)
 
