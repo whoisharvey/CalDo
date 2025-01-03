@@ -63,7 +63,7 @@ const eventReducer = (state, action) => {
             console.error('Error deleting event:', error);
           } else {
             console.log('DELETE_EVENT_SUCCESS dispatched with:', action.payload);
-            dispatch({ type: 'DELETE_EVENT_SUCCESS', payload: action.payload });
+            // dispatch({ type: 'DELETE_EVENT_SUCCESS', payload: action.payload });
           }
         });
       return state;
@@ -128,8 +128,7 @@ export function EventProvider({ children }) {
     return initialState;
   });
 
-  useEffect(() => {
-    const fetchEvents = async () => {
+  const fetchEvents = async () => {
       const { data, error } = await supabase
         .from('tasks')
         .select('*');
@@ -142,6 +141,7 @@ export function EventProvider({ children }) {
       }
     };
 
+  useEffect(() => {
     fetchEvents();
   }, []);
 

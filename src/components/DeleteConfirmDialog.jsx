@@ -7,7 +7,7 @@ function DeleteConfirmDialog({ onConfirm, onCancel }) {
   return (
     <>
       <div className="dialog-overlay" onClick={onCancel} />
-      <div className="dialog-content max-w-md max-h-md dark:bg-gray-700">
+      <div className="dialog-content max-w-md max-h-[90vh] dark:bg-gray-700">
         <div className="flex flex-col items-center text-center">
           <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mb-4">
             <ExclamationTriangleIcon className="w-6 h-6 text-red-600 dark:text-red-200" />
