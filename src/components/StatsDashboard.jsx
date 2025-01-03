@@ -68,10 +68,12 @@ function StatsDashboard() {
 
   const ProgressBar = ({ value, color }) => (
     <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-      <div 
-        className={`h-full ${color}`}
-        style={{ width: `${value}%` }}
-      />
+      {value > 0 && (
+        <div 
+          className={`h-full ${color}`}
+          style={{ width: `${value}%` }}
+        />
+      )}
     </div>
   )
 
