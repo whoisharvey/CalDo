@@ -81,7 +81,7 @@ function EventList({ onEditEvent, activeFilters }) {
   }
 
   return (
-    <div className="p-2 md:p-6 space-y-6">
+    <div className="p-2 md:p-4 space-y-4 md:space-y-6">
       {sortedEvents.length === 0 ? (
         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           {events.length === 0 ? (
@@ -108,20 +108,20 @@ function EventList({ onEditEvent, activeFilters }) {
                     }`}
                   >
                     <thead className="text-xs text-gray-500 dark:text-gray-400">
-                      <tr className="h-10">
-                        <th className="text-center w-1/12 py-2"></th>
-                        <th className="text-center w-1/12 py-2">Icon</th>
-                        <th className="text-left w-2/12 py-2">Task Name</th>
-                        <th className="text-center w-1/12 py-2">Priority</th>
-                        <th className="text-center w-2/12 py-2">Due</th>
-                        <th className="text-left w-3/12 py-2">Description</th>
-                        <th className="text-center w-1/12 py-2">Categories</th>
-                        <th className="text-center w-1/12 py-2">Actions</th>
+                      <tr className="h-8 md:h-10">
+                        <th className="text-center w-1/12 py-1 md:py-2"></th>
+                        <th className="text-center w-1/12 py-1 md:py-2">Icon</th>
+                        <th className="text-left w-2/12 py-1 md:py-2">Task Name</th>
+                        <th className="text-center w-1/12 py-1 md:py-2">Priority</th>
+                        <th className="text-center w-2/12 py-1 md:py-2">Due</th>
+                        <th className="text-left w-3/12 py-1 md:py-2">Description</th>
+                        <th className="text-center w-1/12 py-1 md:py-2">Categories</th>
+                        <th className="text-center w-1/12 py-1 md:py-2">Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className={`text-sm dark:text-gray-100 ${index === 2 ? 'h-10' : ''}`}>
-                        <td className="py-2 text-center">
+                      <tr className={`text-sm dark:text-gray-100 ${index === 2 ? 'h-8 md:h-10' : ''}`}>
+                        <td className="py-1 md:py-2 text-center">
                           <div className="flex items-center justify-center">
                             <button
                               onClick={(e) => handleToggleComplete(event, e)}
@@ -130,54 +130,54 @@ function EventList({ onEditEvent, activeFilters }) {
                               }`}
                             >
                               {event.completed ? (
-                                <CheckCircleSolidIcon className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+                                <CheckCircleSolidIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-400 dark:text-gray-500" />
                               ) : (
-                                <CheckCircleIcon className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+                                <CheckCircleIcon className="w-5 h-5 md:w-6 md:h-6 text-gray-400 dark:text-gray-500" />
                               )}
                             </button>
                           </div>
                         </td>
-                        <td className="py-2 text-center">
-                          <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center mx-auto transition-all
+                        <td className="py-1 md:py-2 text-center">
+                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center mx-auto transition-all
                             ${event.completed 
                               ? 'bg-gray-200 dark:bg-gray-600' 
                               : 'bg-[var(--primary)] bg-opacity-20'}`}
                           >
-                            <span className={`text-lg md:text-lg transition-opacity ${event.completed ? 'opacity-40' : ''}`}>
+                            <span className={`text-base md:text-lg transition-opacity ${event.completed ? 'opacity-40' : ''}`}>
                               {event.icon || '📅'}
                             </span>
                           </div>
                         </td>
-                        <td className="py-2 text-left">
+                        <td className="py-1 md:py-2 text-left">
                           <div className={`flex items-center gap-2 ${event.completed ? 'opacity-50' : ''}`}>
                             <span className={`text-sm ${event.completed ? 'line-through dark:text-gray-400' : 'font-medium dark:text-gray-100'}`}>
                               {event.title}
                             </span>
                           </div>
                         </td>
-                        <td className="py-2 text-center">
+                        <td className="py-1 md:py-2 text-center">
                           <PriorityBadge priority={event.priority} />
                         </td>
-                        <td className="py-2 text-center">
+                        <td className="py-1 md:py-2 text-center">
                           <div className="flex items-center justify-center gap-1 text-sm text-gray-500 dark:text-gray-400">
-                            <ClockIcon className="w-4 h-4" />
+                            <ClockIcon className="w-3 h-3 md:w-4 md:h-4" />
                             {format(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone), 'h:mm a')}
                             {isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed && (
                               <div className="flex items-center gap-1 text-red-500">
-                                <ExclamationCircleIcon className="w-4 h-4" />
+                                <ExclamationCircleIcon className="w-3 h-3 md:w-4 md:h-4" />
                                 Overdue
                               </div>
                             )}
                           </div>
                         </td>
-                        <td className="py-2 text-left">
+                        <td className="py-1 md:py-2 text-left">
                           {event.description && (
                             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
                               {event.description}
                             </p>
                           )}
                         </td>
-                        <td className="py-2 text-center">
+                        <td className="py-1 md:py-2 text-center">
                           {event.labels?.length > 0 && (
                             <div className="flex flex-wrap gap-1 justify-center">
                               {event.labels.map(label => (
@@ -186,7 +186,7 @@ function EventList({ onEditEvent, activeFilters }) {
                             </div>
                           )}
                         </td>
-                        <td className="py-2 text-center">
+                        <td className="py-1 md:py-2 text-center">
                           <div className="flex space-x-1 justify-center">
                             <button
                               onClick={(e) => {
@@ -195,19 +195,19 @@ function EventList({ onEditEvent, activeFilters }) {
                               }}
                               className="p-1 text-gray-400 hover:text-[var(--primary)] rounded-full hover:bg-[var(--hover)]"
                             >
-                              <PencilIcon className="w-5 h-5" />
+                              <PencilIcon className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                             <button
                               onClick={(e) => handleDelete(event.id, e)}
                               className="p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 dark:hover:bg-red-900"
                             >
-                              <TrashIcon className="w-5 h-5" />
+                              <TrashIcon className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                           </div>
                         </td>
                       </tr>
-                      {index === 2 && <tr className="h-2"><td colSpan="8"> </td></tr>}
-                      <tr className="h-2"></tr>
+                      {index === 2 && <tr className="h-1 md:h-2"><td colSpan="8"> </td></tr>}
+                      <tr className="h-1 md:h-2"></tr>
                     </tbody>
                   </table>
                 </React.Fragment>

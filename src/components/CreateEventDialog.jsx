@@ -72,7 +72,7 @@ function CreateEventDialog({ event, onClose }) {
   return (
     <>
       <div className="dialog-overlay" onClick={onClose} />
-      <div className="dialog-content dark:bg-gray-700">
+      <div className="dialog-content max-w-[90%] md:max-w-md max-h-[90vh] dark:bg-gray-700">
         <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700 dark:text-gray-100">
           {event ? 'Edit Task' : 'Create a Task'}
         </h2>

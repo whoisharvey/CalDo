@@ -24,7 +24,7 @@ function WeekDays({ today }) {
             isToday ? 'bg-white bg-opacity-20' : ''
           }`}
         >
-          <div className="text-sm" style={{ color: 'white' }}>{dayName}</div>
+          <div className="text-sm md:text-sm" style={{ color: 'white' }}>{dayName}</div>
           <div className="text-lg font-semibold" style={{ color: 'white' }}>{date}</div>
         </div>
       ))}

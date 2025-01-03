@@ -19,10 +19,10 @@ function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView })
   const isDarkMode = theme === 'dark'
 
   return (
-    <div className="p-4" style={{ color: 'white' }}>
+    <div className="p-4 md:p-4" style={{ color: 'white' }}>
       <div className="flex justify-between items-start">
         <div style={{ color: 'white' }}>
-          <div className="text-5xl font-bold" style={{ color: 'white' }}>{format(today, 'dd')}</div>
+          <div className="text-4xl md:text-5xl font-bold" style={{ color: 'white' }}>{format(today, 'dd')}</div>
           <div className="text-lg" style={{ color: 'white' }}>{format(today, 'EEEE, MMM yyyy')}</div>
         </div>
         <div className="flex items-center gap-2">
@@ -32,7 +32,7 @@ function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView })
             title="Add task"
             type="button"
           >
-            <PlusIcon className="w-6 h-6 text-white" />
+            <PlusIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </button>
           <button
             onClick={toggleView}
@@ -41,9 +41,9 @@ function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView })
             type="button"
           >
             {view === 'list' ? (
-              <CalendarIcon className="w-6 h-6 text-white" />
+              <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
             ) : (
-              <ListBulletIcon className="w-6 h-6 text-white" />
+              <ListBulletIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
             )}
           </button>
           <button
@@ -52,7 +52,7 @@ function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView })
             title="Show statistics"
             type="button"
           >
-            <ChartBarIcon className="w-6 h-6 text-white" />
+            <ChartBarIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </button>
           <ThemeSelector />
           

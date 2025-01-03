@@ -33,6 +33,7 @@ body {
          transition-all duration-300 ease-out;
 }
 
+/* Form Elements */
 .form-input {
   @apply w-full px-3 py-2 
          bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg
@@ -66,7 +67,7 @@ input[type="checkbox"] {
 }
 
 .task-card {
-  @apply border border-gray-100 dark:border-gray-700 rounded-lg p-4 
+  @apply border border-gray-100 dark:border-gray-700 rounded-lg p-2 md:p-4 
          hover:shadow-md hover:border-[var(--primary-light)] dark:hover:border-[var(--primary-light)]
          transition-all duration-200 ease-in-out
          transform hover:-translate-y-0.5
@@ -87,6 +88,7 @@ input[type="checkbox"] {
          rounded-lg transition-colors duration-200;
 }
 
+/* Custom scrollbar */
 .dialog-content::-webkit-scrollbar {
   @apply w-2;
 }
