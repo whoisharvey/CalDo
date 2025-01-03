@@ -8,7 +8,7 @@ import { PRIORITY_LEVELS } from '../constants/priorities'
 import { useNotification } from '../contexts/NotificationContext'
 
 function CreateEventDialog({ event, onClose }) {
-  const { dispatch } = useEvents()
+  const { addEvent, updateEvent } = useEvents()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -38,7 +38,7 @@ function CreateEventDialog({ event, onClose }) {
     }
   }, [event])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('handleSubmit called');
     console.log('Form Data before dispatch:', formData);
@@ -50,22 +50,11 @@ function CreateEventDialog({ event, onClose }) {
 
     if (event) {
       console.log('Dispatching UPDATE_EVENT with:', { ...event, ...eventData });
-      dispatch({
-        type: 'UPDATE_EVENT',
-        payload: {
-          ...event,
-          ...eventData
-        },
-        context: { showNotification }
-      })
+      await updateEvent({ ...event, ...eventData })
       showNotification('Task updated successfully!');
     } else {
       console.log('Dispatching ADD_EVENT with:', eventData);
-      dispatch({
-        type: 'ADD_EVENT',
-        payload: eventData,
-        context: { showNotification }
-      })
+      await addEvent(eventData)
       showNotification('Task created successfully!');
     }
     onClose()

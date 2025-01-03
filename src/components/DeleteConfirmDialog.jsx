@@ -1,9 +1,11 @@
 import React from 'react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { useNotification } from '../contexts/NotificationContext'
+import { useEvents } from '../contexts/EventContext'
 
-function DeleteConfirmDialog({ onConfirm, onCancel }) {
+function DeleteConfirmDialog({ onConfirm, onCancel, eventId }) {
   const { showNotification } = useNotification();
+  const { deleteEvent } = useEvents()
   return (
     <>
       <div className="dialog-overlay" onClick={onCancel} />
@@ -23,10 +25,11 @@ function DeleteConfirmDialog({ onConfirm, onCancel }) {
               Cancel
             </button>
             <button
-              onClick={() => {
+              onClick={async () => {
                 console.log('Confirm delete clicked');
-                onConfirm();
+                await deleteEvent(eventId);
                 showNotification('Task deleted successfully!', 'warning');
+                onCancel()
               }}
               className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
             >

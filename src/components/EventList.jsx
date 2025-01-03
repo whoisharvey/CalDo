@@ -15,7 +15,7 @@ import DeleteConfirmDialog from './DeleteConfirmDialog'
 import { useNotification } from '../contexts/NotificationContext'
 
 function EventList({ onEditEvent, activeFilters }) {
-  const { events, dispatch, loading } = useEvents()
+  const { events, dispatch, loading, toggleComplete } = useEvents()
   const [deleteEventId, setDeleteEventId] = useState(null)
   const { showNotification } = useNotification();
   
@@ -46,14 +46,13 @@ function EventList({ onEditEvent, activeFilters }) {
     setDeleteEventId(eventId)
   }
 
-  const confirmDelete = () => {
-    dispatch({ type: 'DELETE_EVENT', payload: deleteEventId, context: { showNotification } })
+  const confirmDelete = async () => {
     setDeleteEventId(null)
   }
 
-  const toggleComplete = (eventId, e) => {
+  const handleToggleComplete = async (event, e) => {
     e.stopPropagation()
-    dispatch({ type: 'TOGGLE_COMPLETE', payload: eventId, context: { showNotification } })
+    await toggleComplete(event.id, event.completed)
   }
 
   const getTimeStatus = (time) => {
@@ -125,7 +124,7 @@ function EventList({ onEditEvent, activeFilters }) {
                         <td className="py-2 text-center">
                           <div className="flex items-center justify-center">
                             <button
-                              onClick={(e) => toggleComplete(event.id, e)}
+                              onClick={(e) => handleToggleComplete(event, e)}
                               className={`focus:outline-none p-1 text-gray-400 rounded-full ${
                                 !event.completed ? 'hover:text-[var(--primary)] hover:bg-[var(--hover)]' : ''
                               }`}
@@ -222,6 +221,7 @@ function EventList({ onEditEvent, activeFilters }) {
         <DeleteConfirmDialog
           onConfirm={confirmDelete}
           onCancel={() => setDeleteEventId(null)}
+          eventId={deleteEventId}
         />
       )}
     </div>

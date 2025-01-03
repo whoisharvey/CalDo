@@ -7,90 +7,20 @@ const initialState = []
 
 const eventReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_EVENT':
-      console.log('ADD_EVENT action received:', action.payload);
-      supabase
-        .from('tasks')
-        .insert([action.payload])
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('Error adding event:', error);
-          } else {
-            if (data && data.length > 0) {
-              console.log('ADD_EVENT_SUCCESS dispatched with:', data[0]);
-              dispatch({ type: 'ADD_EVENT_SUCCESS', payload: data[0] });
-            } else {
-              console.error('Error: data is null after insert');
-            }
-          }
-        });
-      return state;
     case 'ADD_EVENT_SUCCESS':
       console.log('ADD_EVENT_SUCCESS reducer, state:', state, 'payload:', action.payload);
       return [...state, action.payload];
-    case 'UPDATE_EVENT':
-      console.log('UPDATE_EVENT action received:', action.payload);
-      supabase
-        .from('tasks')
-        .update(action.payload)
-        .eq('id', action.payload.id)
-        .then(({ data, error }) => {
-          if (error) {
-            console.error('Error updating event:', error);
-          } else {
-            if (data && data.length > 0) {
-              console.log('UPDATE_EVENT_SUCCESS dispatched with:', data[0]);
-              dispatch({ type: 'UPDATE_EVENT_SUCCESS', payload: data[0] });
-            } else {
-              console.error('Error: data is null after update');
-            }
-          }
-        });
-      return state;
     case 'UPDATE_EVENT_SUCCESS':
       console.log('UPDATE_EVENT_SUCCESS reducer, state:', state, 'payload:', action.payload);
       return state.map(event =>
         event.id === action.payload.id ? action.payload : event
       );
-    case 'DELETE_EVENT':
-      console.log('DELETE_EVENT action received:', action.payload);
-      supabase
-        .from('tasks')
-        .delete()
-        .eq('id', action.payload)
-        .then(({ error }) => {
-          if (error) {
-            console.error('Error deleting event:', error);
-          } else {
-            console.log('DELETE_EVENT_SUCCESS dispatched with:', action.payload);
-            // dispatch({ type: 'DELETE_EVENT_SUCCESS', payload: action.payload });
-          }
-        });
-      return state;
     case 'DELETE_EVENT_SUCCESS':
       return state.filter(event => event.id !== action.payload);
-    case 'TOGGLE_COMPLETE':
-      supabase
-        .from('tasks')
-        .update({ completed: !state.find(event => event.id === action.payload).completed })
-        .eq('id', action.payload)
-        .then(({ error, data }) => {
-          if (error) {
-            console.error('Error toggling complete:', error);
-          } else {
-            if (data && data.length > 0) {
-              console.log('TOGGLE_COMPLETE_SUCCESS dispatched with:', action.payload);
-              dispatch({ type: 'TOGGLE_COMPLETE_SUCCESS', payload: action.payload });
-            } else {
-              console.error('Error: data is null after toggle complete');
-            }
-          }
-        });
-      return state;
     case 'TOGGLE_COMPLETE_SUCCESS':
       return state.map(event =>
-        event.id === action.payload
-          ? { ...event, completed: !event.completed }
+        event.id === action.payload.id
+          ? { ...event, completed: action.payload.completed }
           : event
       );
     case 'SET_EVENTS':
@@ -145,8 +75,90 @@ export function EventProvider({ children }) {
     fetchEvents();
   }, []);
 
+  const addEvent = async (event) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([event])
+        .select()
+      if (error) {
+        console.error('Error adding event:', error);
+      } else {
+        if (data && data.length > 0) {
+          console.log('ADD_EVENT_SUCCESS dispatched with:', data[0]);
+          dispatch({ type: 'ADD_EVENT_SUCCESS', payload: data[0] });
+        } else {
+          console.error('Error: data is null after insert');
+        }
+      }
+    } catch (error) {
+      console.error('Error adding event:', error);
+    }
+  };
+
+  const updateEvent = async (event) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .update(event)
+        .eq('id', event.id)
+        .select()
+      if (error) {
+        console.error('Error updating event:', error);
+      } else {
+        if (data && data.length > 0) {
+          console.log('UPDATE_EVENT_SUCCESS dispatched with:', data[0]);
+          dispatch({ type: 'UPDATE_EVENT_SUCCESS', payload: data[0] });
+        } else {
+          console.error('Error: data is null after update');
+        }
+      }
+    } catch (error) {
+      console.error('Error updating event:', error);
+    }
+  };
+
+  const deleteEvent = async (eventId) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', eventId)
+      if (error) {
+        console.error('Error deleting event:', error);
+      } else {
+        console.log('DELETE_EVENT_SUCCESS dispatched with:', eventId);
+        dispatch({ type: 'DELETE_EVENT_SUCCESS', payload: eventId });
+      }
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
+
+  const toggleComplete = async (eventId, completed) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .update({ completed: !completed })
+        .eq('id', eventId)
+        .select()
+      if (error) {
+        console.error('Error toggling complete:', error);
+      } else {
+        if (data && data.length > 0) {
+          console.log('TOGGLE_COMPLETE_SUCCESS dispatched with:', { id: eventId, completed: !completed });
+          dispatch({ type: 'TOGGLE_COMPLETE_SUCCESS', payload: { id: eventId, completed: !completed } });
+        } else {
+          console.error('Error: data is null after toggle complete');
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling complete:', error);
+    }
+  };
+
   return (
-    <EventContext.Provider value={{ events, dispatch }}>
+    <EventContext.Provider value={{ events, dispatch, addEvent, updateEvent, deleteEvent, toggleComplete }}>
       {children}
     </EventContext.Provider>
   )
