@@ -28,6 +28,23 @@ function SupabaseTest() {
     fetchTasks();
   }, []);
 
+  const handleAddTask = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([{ title: 'Test Task', time: new Date().toISOString(), completed: false }])
+        .select();
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setTasks([...tasks, ...data]);
+      }
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading) {
     return <p>Loading tasks...</p>;
   }
@@ -39,6 +56,7 @@ function SupabaseTest() {
   return (
     <div>
       <h2>Tasks from Supabase:</h2>
+      <button onClick={handleAddTask}>Add Test Task</button>
       {tasks.length === 0 ? (
         <p>No tasks found.</p>
       ) : (

@@ -83,6 +83,7 @@ export function EventProvider({ children }) {
   }, []);
 
   const addEvent = async (event) => {
+    console.log('Adding event:', event);
     try {
       const { data, error } = await supabase
         .from('tasks')
@@ -90,8 +91,10 @@ export function EventProvider({ children }) {
         .select()
       if (error) {
         console.error('Error adding event:', error);
+        console.error('Supabase error details:', error);
       } else {
         if (data && data.length > 0) {
+          console.log('Event added successfully:', data[0]);
           dispatch({ type: 'ADD_EVENT_SUCCESS', payload: data[0] });
         } else {
           console.error('Error: data is null after insert');
@@ -103,6 +106,7 @@ export function EventProvider({ children }) {
   };
 
   const updateEvent = async (event) => {
+     console.log('Updating event:', event);
     try {
       const { data, error } = await supabase
         .from('tasks')
@@ -111,8 +115,10 @@ export function EventProvider({ children }) {
         .select()
       if (error) {
         console.error('Error updating event:', error);
+        console.error('Supabase error details:', error);
       } else {
         if (data && data.length > 0) {
+          console.log('Event updated successfully:', data[0]);
           dispatch({ type: 'UPDATE_EVENT_SUCCESS', payload: data[0] });
         } else {
           console.error('Error: data is null after update');

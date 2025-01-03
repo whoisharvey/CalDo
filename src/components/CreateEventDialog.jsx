@@ -5,6 +5,7 @@ import { useNotification } from '../contexts/NotificationContext'
 import IconSelector from './IconSelector'
 import LabelSelector from './LabelSelector'
 import { XMarkIcon } from '@heroicons/react/24/outline'
+import { PRIORITY_LEVELS } from '../constants/priorities'
 
 function CreateEventDialog({ event: initialEvent, onClose }) {
   const { addEvent, updateEvent } = useEvents()
@@ -16,16 +17,19 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
     reminder: false,
     icon: '📅',
     completed: false,
-    subtasks: [{ title: '', completed: false }],
+    subtasks: [],
     labels: [],
     priority: 'low'
   })
 
   useEffect(() => {
     if (initialEvent) {
+      console.log('Initial Event:', initialEvent);
       setEvent({
         ...initialEvent,
-        time: initialEvent.time ? new Date(initialEvent.time).toISOString() : new Date().toISOString()
+        time: initialEvent.time ? new Date(initialEvent.time).toISOString() : new Date().toISOString(),
+        subtasks: initialEvent.subtasks || [],
+        labels: initialEvent.labels || []
       })
     }
   }, [initialEvent])
@@ -82,6 +86,14 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
     }))
   }
 
+  const handlePriorityChange = (priority) => {
+    setEvent(prevEvent => {
+      const updatedEvent = { ...prevEvent, priority };
+      console.log('Priority updated:', updatedEvent.priority);
+      return updatedEvent;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (event.title.trim() === '') {
@@ -130,6 +142,12 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               placeholder="Enter task name"
             />
           </div>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Icon
+            </label>
+            <IconSelector selectedIcon={event.icon} onSelectIcon={handleIconSelect} />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Date and Time
@@ -160,7 +178,7 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               Subtasks
             </label>
             <div className="space-y-2">
-              {event.subtasks.map((subtask, index) => (
+              {event.subtasks && event.subtasks.map((subtask, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <input
                     type="text"
@@ -199,8 +217,26 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               className="form-checkbox"
             />
           </div>
-          <IconSelector selectedIcon={event.icon} onSelectIcon={handleIconSelect} />
-          <LabelSelector selectedLabels={event.labels} onLabelToggle={handleLabelToggle} />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Priority
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(PRIORITY_LEVELS).map(([key, level]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => handlePriorityChange(key)}
+                  className={`px-2 py-1 rounded-full text-xs font-medium border transition-all
+                    flex items-center gap-1.5`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${level.dot}`} />
+                  {level.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <LabelSelector selectedLabels={event.labels || []} onLabelToggle={handleLabelToggle} />
           <div className="flex justify-end gap-2">
             <button type="button" onClick={onClose} className="btn-secondary">
               Cancel
