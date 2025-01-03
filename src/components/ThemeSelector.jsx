@@ -47,14 +47,14 @@ function ThemeSelector() {
     <div className="relative group" style={{ zIndex: 40 }}>
       <button 
         onClick={() => toggleDarkMode(isDarkMode ? 'light' : 'dark')}
-        className="p-2 rounded-full hover:bg-white/20 transition-colors"
+        className="p-1 rounded-full hover:bg-white/20 transition-colors"
         title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         type="button"
       >
         {isDarkMode ? (
-          <SunIcon className="w-8 h-8 text-white" />
+          <SunIcon className="w-6 h-6 text-white" />
         ) : (
-          <MoonIcon className="w-8 h-8 text-white" />
+          <MoonIcon className="w-6 h-6 text-white" />
         )}
       </button>
       
