@@ -6,10 +6,12 @@ import {
   ChartBarIcon, 
   ListBulletIcon,
   MoonIcon,
-  SunIcon
+  SunIcon,
+  Cog6ToothIcon
 } from '@heroicons/react/24/outline'
 import ThemeSelector from './ThemeSelector'
 import { useTheme } from '../contexts/ThemeContext'
+import { Link } from 'react-router-dom';
 
 function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView }) {
   const toggleView = () => {
@@ -54,8 +56,12 @@ function CalendarHeader({ today, isDialogOpen, setIsDialogOpen, view, setView })
           >
             <ChartBarIcon className="w-5 h-5 md:w-6 md:h-6 text-white" />
           </button>
-          <ThemeSelector />
-          
+          <div className="flex items-center gap-2">
+            <ThemeSelector />
+            <Link to="/settings" className="p-1 rounded-full hover:bg-white/20 transition-colors" title="Settings">
+              <Cog6ToothIcon className="w-5 h-5 md:w-6 md:h-6 text-white" style={{ color: 'white' }}/>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

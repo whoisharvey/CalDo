@@ -6,6 +6,8 @@ import IconSelector from './IconSelector'
 import LabelSelector from './LabelSelector'
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { PRIORITY_LEVELS } from '../constants/priorities'
+import { styleLibrary } from '../styles/styleLibrary'
+import { useTheme } from '../contexts/ThemeContext'
 
 function CreateEventDialog({ event: initialEvent, onClose }) {
   const { addEvent, updateEvent, toggleComplete } = useEvents()
@@ -21,6 +23,7 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
     labels: [],
     priority: 'low'
   })
+  const { theme } = useTheme()
 
   useEffect(() => {
     if (initialEvent) {
@@ -97,7 +100,9 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
   const calculateSubtaskProgress = (subtasks) => {
     if (!subtasks || subtasks.length === 0) return 0;
     const completedSubtasks = subtasks.filter(subtask => subtask.completed).length;
-    return (completedSubtasks / subtasks.length) * 100;
+    const progress = (completedSubtasks / subtasks.length) * 100;
+    console.log('Progress:', progress)
+    return progress;
   };
 
   const handleToggleSubtask = async (subtaskIndex) => {
@@ -133,8 +138,8 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
 
   return (
     <>
-      <div className="dialog-overlay" onClick={onClose} />
-      <div className="dialog-content">
+      <div className={styleLibrary.dialog.overlay} onClick={onClose} />
+      <div className={styleLibrary.dialog.content}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-100">
             {initialEvent ? 'Edit Task' : 'Add New Task'}
@@ -153,26 +158,20 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               name="title"
               value={event.title}
               onChange={handleChange}
-              className="form-input"
+              className={styleLibrary.input.field}
               placeholder="Enter task name"
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Icon
-            </label>
-            <IconSelector selectedIcon={event.icon} onSelectIcon={handleIconSelect} />
-          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Date and Time
+              Time
             </label>
             <input
               type="datetime-local"
               name="time"
               value={format(parseISO(event.time), "yyyy-MM-dd'T'HH:mm")}
               onChange={handleTimeChange}
-              className="form-input"
+              className={styleLibrary.input.field}
             />
           </div>
           <div>
@@ -183,80 +182,27 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               name="description"
               value={event.description}
               onChange={handleChange}
-              className="form-input"
+              className={styleLibrary.input.field}
               placeholder="Enter task description"
               rows="3"
             />
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Subtasks
-            </label>
-            {event.subtasks && event.subtasks.length > 0 && (
-              <div className="mb-2">
-                <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <div className={`h-full bg-[var(--primary)]`} style={{ width: `${calculateSubtaskProgress(event.subtasks)}%` }} />
-                </div>
-              </div>
-            )}
-            <div className="space-y-2">
-              {event.subtasks && event.subtasks.map((subtask, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={subtask.completed}
-                    onClick={() => handleToggleSubtask(index)}
-                    className="form-checkbox"
-                  />
-                  <input
-                    type="text"
-                    value={subtask.title}
-                    onChange={(e) => handleSubtaskChange(index, e)}
-                    className="form-input flex-1"
-                    placeholder="Enter subtask"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSubtask(index)}
-                    className="p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 dark:hover:bg-red-900"
-                  >
-                    <XMarkIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={handleAddSubtask}
-                className="btn-primary mt-2 w-7 h-7"
-              >
-                <PlusIcon className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Reminder
-            </label>
-            <input
-              type="checkbox"
-              name="reminder"
-              checked={event.reminder}
-              onChange={handleChange}
-              className="form-checkbox"
-            />
-          </div>
-          <div className="space-y-2">
+          <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Priority
             </label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex gap-2">
               {Object.entries(PRIORITY_LEVELS).map(([key, level]) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => handlePriorityChange(key)}
-                  className={`px-2 py-1 rounded-full text-xs font-medium border transition-all
-                    flex items-center gap-1.5`}
+                  className={`px-3 py-2 rounded-full text-sm font-medium border transition-all
+                    flex items-center gap-1.5
+                    ${event.priority === key
+                      ? `${level.bg} ${level.text} ${level.border}`
+                      : 'bg-gray-50 dark:bg-gray-600 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-500'
+                    }`}
                 >
                   <span className={`w-2 h-2 rounded-full ${level.dot}`} />
                   {level.name}
@@ -264,15 +210,60 @@ function CreateEventDialog({ event: initialEvent, onClose }) {
               ))}
             </div>
           </div>
-          <LabelSelector selectedLabels={event.labels || []} onLabelToggle={handleLabelToggle} />
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="btn-secondary">
-              Cancel
-            </button>
-            <button type="submit" className="btn-primary">
-              {initialEvent ? 'Update Task' : 'Add Task'}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="reminder"
+              checked={event.reminder}
+              onChange={handleChange}
+              className={styleLibrary.input.checkbox}
+            />
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Set Reminder
+            </label>
+          </div>
+          <IconSelector selectedIcon={event.icon} onSelectIcon={handleIconSelect} />
+          <LabelSelector selectedLabels={event.labels} onLabelToggle={handleLabelToggle} />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Subtasks
+            </label>
+            {event.subtasks.map((subtask, index) => (
+              <div key={index} className="flex items-center gap-2 mb-2">
+                <input
+                  type="checkbox"
+                  checked={subtask.completed}
+                  onChange={() => handleToggleSubtask(index)}
+                  className={styleLibrary.input.checkbox}
+                />
+                <input
+                  type="text"
+                  value={subtask.title}
+                  onChange={(e) => handleSubtaskChange(index, e)}
+                  className={styleLibrary.input.field}
+                  placeholder={`Subtask ${index + 1}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveSubtask(index)}
+                  className="p-1 text-gray-400 hover:text-red-500"
+                >
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={handleAddSubtask}
+              className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            >
+              <PlusIcon className="w-4 h-4" />
+              Add Subtask
             </button>
           </div>
+          <button type="submit" className={styleLibrary.button.primary}>
+            {initialEvent ? 'Update Task' : 'Add Task'}
+          </button>
         </form>
       </div>
     </>

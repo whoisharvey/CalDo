@@ -14,6 +14,7 @@ import PriorityBadge from './PriorityBadge'
 import { useTheme } from '../contexts/ThemeContext'
 import DeleteConfirmDialog from './DeleteConfirmDialog'
 import { useNotification } from '../contexts/NotificationContext'
+import { styleLibrary } from '../styles/styleLibrary'
 
 function EventList({ onEditEvent, activeFilters }) {
   const { events, dispatch, loading, toggleComplete } = useEvents()
@@ -148,12 +149,12 @@ function EventList({ onEditEvent, activeFilters }) {
                           </div>
                         </td>
                         <td className="py-1 md:py-2 text-center">
-                          <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center mx-auto transition-all
+                          <div className={` ${styleLibrary.icon.container}
                             ${event.completed 
                               ? 'bg-gray-200 dark:bg-gray-600' 
                               : 'bg-[var(--primary)] bg-opacity-20'}`}
                           >
-                            <span className={`text-base md:text-lg transition-opacity ${event.completed ? 'opacity-40' : ''}`}>
+                            <span className={`${styleLibrary.icon.text} ${event.completed ? 'opacity-40' : ''}`}>
                               {event.icon || '📅'}
                             </span>
                           </div>
@@ -169,7 +170,7 @@ function EventList({ onEditEvent, activeFilters }) {
                           <PriorityBadge priority={event.priority} />
                         </td>
                         <td className="py-1 md:py-2 text-center">
-                          <div className={`flex items-center justify-center gap-1 text-sm text-gray-500 dark:text-gray-400
+                          <div className={`flex items-center justify-center gap-1 text-sm ${styleLibrary.text.secondary}
                             ${isPast(utcToZonedTime(event.time, Intl.DateTimeFormat().resolvedOptions().timeZone)) && !event.completed ? 'text-red-500' : ''}`}
                           >
                             <ClockIcon className="w-3 h-3 md:w-4 md:h-4" />
@@ -204,7 +205,7 @@ function EventList({ onEditEvent, activeFilters }) {
                                 e.stopPropagation()
                                 onEditEvent(event)
                               }}
-                              className="p-1 text-gray-400 hover:text-[var(--primary)] rounded-full hover:bg-[var(--hover)]"
+                              className={`p-1 text-gray-400 hover:text-[var(--primary)] rounded-full hover:bg-[var(--hover)] ${styleLibrary.focus.default}`}
                             >
                               <PencilIcon className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
